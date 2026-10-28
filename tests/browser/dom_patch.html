@@ -1,0 +1,33 @@
+<!doctype html><html lang="en"><meta charset="utf-8"><title>Album DOM regression tests</title>
+<style>body{font:16px system-ui;padding:20px}.library{height:160px;overflow:auto;width:250px}.tile{height:38px;display:block}#results{white-space:pre-wrap}</style>
+<h1>Album DOM regression tests</h1><div id="fixture"></div><pre id="results">Running…</pre>
+<script type="module">
+import {patchHtml} from '../../static/dom_patch.js';
+const root=document.getElementById('fixture'), results=[];
+function check(value,message){if(!value)throw Error(message);results.push('PASS · '+message);}
+function html(selected=false,active=0,count=100){return `<div data-key="shell"><aside data-key="library"><input id="search" value=""><div id="library-list" class="library">${Array.from({length:count},(_,i)=>`<button class="tile ${selected&&i===98?'selected':''}" data-key="photo-${i}" id="photo-${i}">Wedding-${String(i+1).padStart(4,'0')}</button>`).join('')}</div></aside><main data-key="workspace"><div data-key="stage-${active}">Spread ${active+1}</div><div class="navigation"><button id="nav-next">Next spread</button></div><div data-key="filmstrip"><img id="compact" src="./pixel.svg"></div><input id="target" value="${active?25:20}"></main></div>`;}
+try{
+ patchHtml(root,html());
+ const library=document.getElementById('library-list'),tile=document.getElementById('photo-98'),image=document.getElementById('compact');
+ library.scrollTop=3000;tile.focus({preventScroll:true});const scroll=library.scrollTop;
+ patchHtml(root,html(true));
+ check(document.getElementById('library-list')===library,'selection keeps the existing library DOM');
+ check(document.getElementById('photo-98')===tile,'selection keeps the existing photo button');
+ check(document.activeElement===tile,'selection retains keyboard focus');
+ check(library.scrollTop===scroll,'selection retains the library scroll position');
+ const navigation=root.querySelector('.navigation'),nextButton=document.getElementById('nav-next');nextButton.focus();
+ patchHtml(root,html(true,1));
+ check(root.querySelector('.navigation')===navigation,'replacing the spread retains its navigation controls');
+ check(document.activeElement===nextButton,'spread navigation retains the focused button');
+ check(document.getElementById('library-list')===library&&library.scrollTop===scroll,'spread navigation keeps library and scrolling');
+ check(document.getElementById('compact')===image,'spread navigation keeps compact image elements');
+ check(document.getElementById('target').value==='25','model changes update control values');
+ const input=document.getElementById('search');input.value='unsaved search';input.focus();input.setSelectionRange(3,5);
+ patchHtml(root,html(true,1));
+ check(input.value==='unsaved search'&&input.selectionStart===3&&input.selectionEnd===5,'unchanged controls retain text and cursor selection');
+ const start=performance.now();for(let i=0;i<30;i++)patchHtml(root,html(i%2===0,i%2));
+ results.push(`Synthetic 100-photo reconciliation: ${((performance.now()-start)/30).toFixed(2)} ms per update (this browser; not a real-gallery benchmark).`);
+ document.getElementById('results').textContent=results.join('\n');
+ document.title='PASS · Album DOM regression tests';
+}catch(error){document.getElementById('results').textContent=results.join('\n')+'\nFAIL · '+error.message;document.title='FAIL · Album DOM regression tests';}
+</script></html>

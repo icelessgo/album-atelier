@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 124" role="img" aria-labelledby="title desc">
+<title id="title">Album Atelier</title><desc id="desc">An original open-book symbol with two outlined pages and an abstract sun.</desc>
+<rect width="240" height="124" rx="18" fill="#fff8f5"/>
+<path d="M57 27c26-5 45-3 63 8 18-11 37-13 63-8v64c-26-5-45-3-63 8-18-11-37-13-63-8z" fill="#fff" stroke="#284957" stroke-width="4" stroke-linejoin="round"/>
+<path d="M120 35v64M73 72l14-19 17 19M136 77h31M136 66h31M136 55h18" fill="none" stroke="#284957" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+<circle cx="99" cy="45" r="6" fill="#c83a32"/>
+</svg>

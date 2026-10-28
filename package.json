@@ -1,0 +1,10 @@
+{
+  "name": "album-atelier",
+  "private": true,
+  "license": "MIT",
+  "type": "module",
+  "scripts": {
+    "test:geometry": "node --test tests/layout_geometry.test.js",
+    "test": "node --test tests/*.test.js"
+  }
+}

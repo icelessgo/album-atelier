@@ -1,0 +1,2 @@
+Pillow>=12.1,<13
+ReportLab==4.4.9

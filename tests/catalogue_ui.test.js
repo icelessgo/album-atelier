@@ -1,0 +1,16 @@
+import assert from 'node:assert/strict';
+import {priceMinor,renderOrderChoices,renderApprovalPanel,renderCatalogue} from '../static/catalogue_ui.js';
+assert.equal(priceMinor('150'),15000);
+assert.equal(priceMinor('150.05'),15005);
+for (const value of ['-2','1e3','NaN','150.001','1,000','']) assert.throws(()=>priceMinor(value));
+const offer={order_choices:{cover:['Forest & green','Ivory'],box:[],finish:[]}};
+const rendered=renderOrderChoices(offer,{cover:'Forest & green',finish:'<script>bad</script>'});
+assert.match(rendered,/Forest &amp; green/);
+assert.ok(!rendered.includes('<script>'));
+assert.match(rendered,/select id="order-cover"/);
+assert.match(rendered,/input id="order-finish"/);
+const project={id:'synthetic',status:'draft',history:[],sharing_pending:'offline'};
+assert.match(renderApprovalPanel(project,null),/still needs to be withdrawn/);
+assert.ok(!renderApprovalPanel(project,null).includes('Create CRM draft quote'));
+assert.equal(renderCatalogue(null,{}),'');
+console.log('Catalogue UI: exact cents, escaped choices and approval gating tests passed');
